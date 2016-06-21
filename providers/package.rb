@@ -3,14 +3,14 @@ action :install do
   tmp_file_path = ::File.join Chef::Config[:file_cache_path], new_resource.name.gsub(/\//, '-')
 
   bash "Installing package #{new_resource.name}" do
-    code "#{node['go']['install_dir']}/go/bin/go get -v #{new_resource.name} 2> >(grep -v '(download)$' > #{tmp_file_path})"
+    code "#{node['go']['gobin']}/go get -v #{new_resource.name} 2> >(grep -v '(download)$' > #{tmp_file_path})"
     action :nothing
     user node['go']['owner']
     group node['go']['group']
     environment({
-      'GOPATH' => node['go']['gopath'],
-      'GOBIN' => node['go']['gobin']
-    })
+                    'GOPATH' => node['go']['gopath'],
+                    'GOBIN' => node['go']['gobin']
+                })
   end.run_action(:run)
 
   f = file tmp_file_path do
@@ -26,14 +26,14 @@ action :update do
   tmp_file_path = ::File.join Chef::Config[:file_cache_path], new_resource.name.gsub(/\//, '-')
 
   bash "Updating package #{new_resource.name}" do
-    code "#{node['go']['install_dir']}/go/bin/go get -v -u #{new_resource.name} 2> >(grep -v '(download)$' > #{tmp_file_path})"
+    code "#{node['go']['gobin']}/go get -v -u #{new_resource.name} 2> >(grep -v '(download)$' > #{tmp_file_path})"
     action :nothing
     user node['go']['owner']
     group node['go']['group']
     environment({
-      'GOPATH' => node['go']['gopath'],
-      'GOBIN' => node['go']['gobin']
-    })
+                    'GOPATH' => node['go']['gopath'],
+                    'GOBIN' => node['go']['gobin']
+                })
   end.run_action(:run)
 
   f = file tmp_file_path do
@@ -57,15 +57,15 @@ action :build do
   tmpdir.run_action(:create)
 
   b = bash "Build package #{new_resource.name}" do
-    code "#{node['go']['install_dir']}/go/bin/go build #{new_resource.name}"
+    code "#{node['go']['gobin']}/go build #{new_resource.name}"
     action :nothing
     cwd tmpdir.name
     user node['go']['owner']
     group node['go']['group']
     environment({
-      'GOPATH' => node['go']['gopath'],
-      'GOBIN' => node['go']['gobin']
-    })
+                    'GOPATH' => node['go']['gopath'],
+                    'GOBIN' => node['go']['gobin']
+                })
   end
 
   # execute the build

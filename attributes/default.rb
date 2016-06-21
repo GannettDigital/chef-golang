@@ -10,3 +10,5 @@ default['go']['packages'] = []
 default['go']['owner'] = 'root'
 default['go']['group'] = 'root'
 default['go']['mode'] = 0755
+default['go']['package_install'] = false
+default['go']['package_version'] = '1.6.2-1.el7.centos'
