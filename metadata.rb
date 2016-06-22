@@ -6,8 +6,8 @@ description      'Installs go programming language'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '1.6.0'
 
-recipe "golang", "Installs go programing language."
-recipe "golang::packages", "Installs go packages and SCM requirements."
+recipe 'golang', 'Installs go programing language.'
+recipe 'golang::packages', 'Installs go packages and SCM requirements.'
 
 supports 'debian'
 supports 'ubuntu'

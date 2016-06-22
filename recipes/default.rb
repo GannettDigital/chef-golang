@@ -18,17 +18,17 @@
 #
 
 if node['go']['package_install']
-  package "install golang" do
+  package 'install golang' do
     package_name 'golang'
     version node['go']['package_version']
   end
 else
-  bash "install-golang" do
+  bash 'install-golang' do
     cwd Chef::Config[:file_cache_path]
     code <<-EOH
     rm -rf go
     rm -rf #{node['go']['install_dir']}/go
-    tar -C #{node['go']['install_dir']} -xzf #{node["go"]["filename"]}
+    tar -C #{node['go']['install_dir']} -xzf #{node['go']['filename']}
     EOH
     action :nothing
   end
@@ -58,8 +58,8 @@ else
   end
 end
 
-template "/etc/profile.d/golang.sh" do
-  source "golang.sh.erb"
+template '/etc/profile.d/golang.sh' do
+  source 'golang.sh.erb'
   owner 'root'
   group 'root'
   mode 0755
