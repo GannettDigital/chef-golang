@@ -2,6 +2,10 @@
 
 This file is used to list changes made in each version of golang.
 
+## 1.6.0:
+
+* Added ability to install golang from package
+
 ## 1.4.0:
 
 * Add build action to LWRP

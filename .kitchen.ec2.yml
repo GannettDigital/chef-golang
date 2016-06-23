@@ -1,0 +1,43 @@
+driver:
+  name: ec2
+  aws_ssh_key_id: <%= ENV['AWS_SSH_KEY'] %>
+  security_group_ids:  <%= ENV['AWS_SECURITY_GROUPS'] %>
+  region: <%= ENV['AWS_REGION'] %>
+  availability_zone: <%= ENV['AWS_AVAILABILITY_ZONE'] %>
+  require_chef_omnibus: true
+  subnet_id: <%= ENV['AWS_SUBNET'] %>
+  associate_public_ip: false
+  interface: private
+  tags:
+    OWNER: <%= ENV['AWS_OWNER_TAG'] %>
+    Name: <%= ENV['AWS_NAME_TAG'] %>
+
+provisioner:
+  name: chef_zero
+
+transport:
+  ssh_key: <%= ENV['SSH_KEY_PATH'] %><%= ENV['AWS_SSH_KEY'] %>.pem
+
+platforms:
+  - name: centos-7.1
+    driver:
+      image_id: <%= ENV['AWS_CENTOS7_AMI_ID'] %>
+      instance_type: <%= ENV['LINUX_INSTANCE_SIZE'] %>
+      user_data: <%= ENV['LINUX_USER_DATA_PATH'] %>
+    transport:
+      username: <%= ENV['AWS_CENTOS7_USERNAME'] %>
+
+suites:
+- name: package
+  run_list:
+    - recipe[yum-gd]
+    - recipe[gd-test-helper]
+    - recipe[golang::default]
+    - recipe[golang::packages]
+  attributes:
+    go:
+      install_dir: "/usr/lib/"
+      gobin: "/usr/lib/golang/bin"
+      package_install: true
+      packages:
+        - "github.com/Masterminds/glide"

@@ -1,18 +1,54 @@
-#!/usr/bin/env rake
+gem 'test-kitchen', '1.4.2'
+gem 'rubocop', '= 0.36.0'
+gem 'foodcritic', '= 5.0.0'
 
+require 'rspec/core/rake_task'
+require 'rubocop/rake_task'
 require 'foodcritic'
-require 'rake/testtask'
+require 'kitchen/cli'
 
-# FC043 is excluded because of the problem described in https://github.com/NOX73/chef-golang/issues/3
-FoodCritic::Rake::LintTask.new do |t|
-  t.options = { :fail_tags => ['any'], :tags => ['~FC043'] }
+# Style tests. Rubocop and Foodcritic
+namespace :style do
+  desc 'Run Ruby style checks'
+  RuboCop::RakeTask.new(:ruby)
+
+  desc 'Run Chef style checks'
+  FoodCritic::Rake::LintTask.new(:chef) do |t|
+    t.options = {
+      fail_tags: ['any'],
+      tags: ['~FC005']
+    }
+  end
 end
 
-begin
-  require 'kitchen/rake_tasks'
-  Kitchen::RakeTasks.new
-rescue LoadError
-  puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV['CI']
+desc 'Run all style checks'
+task style: ['style:chef', 'style:ruby']
+
+# Rspec and ChefSpec
+desc 'Run ChefSpec examples'
+RSpec::Core::RakeTask.new(:spec)
+
+# Integration tests. Kitchen.ci
+namespace :integration do
+  desc 'Run Test Kitchen with Vagrant'
+  task :vagrant do
+    Kitchen.logger = Kitchen.default_file_logger
+    Kitchen::Config.new.instances.each do |instance|
+      instance.test(:always)
+    end
+  end
+  task :ec2 do
+    ENV['KITCHEN_YAML'] = './.kitchen.ec2.yml'
+    Kitchen::CLI.new([], concurrency: 5, destroy: 'always').test
+  end
+  task :ec2_singlethread do
+    ENV['KITCHEN_YAML'] = './.kitchen.ec2.yml'
+    Kitchen::CLI.new([], destroy: 'always').test
+  end
 end
 
-task :default => :foodcritic
+# Default
+task default: ['style', 'spec', 'integration:vagrant']
+task ec2: ['style', 'spec', 'integration:ec2']
+task ec2_singlethread: ['style', 'spec', 'integration:ec2_singlethread']
+task test: ['style', 'spec']

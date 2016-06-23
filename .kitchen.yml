@@ -8,14 +8,31 @@ provisioner:
 
 platforms:
 - name: ubuntu-14.10
-- name: centos-6.5
+- name: centos-7.2
 
 suites:
+- name: package
+  run_list:
+    - recipe[yum-gd]
+    - recipe[gd-test-helper]
+    - recipe[golang::default]
+    - recipe[golang::packages]
+  attributes:
+    go:
+      install_dir: "/usr/lib/"
+      gobin: "/usr/lib/golang/bin"
+      package_install: true
+      packages:
+        - "github.com/Masterminds/glide"
+  excludes:
+    - ubuntu-14.10
+
 - name: default
   run_list:
     - recipe[golang_test::default]
     - recipe[minitest-handler]
   attributes:
     go:
+      package_install: false
       owner: 'vagrant'
       group: 'vagrant'
