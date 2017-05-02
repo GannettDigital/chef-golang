@@ -4,8 +4,6 @@ gem 'foodcritic', '= 5.0.0'
 gem 'rake', '= 10.5.0'
 gem 'berkshelf', '= 4.0.1'
 gem 'chef-handler-profiler', '= 0.0.2'
-gem 'chef-handler-opsmatic', '= 0.0.19'
-gem 'chef-handler-datadog', '= 0.6.0'
 gem 'rubocop', '= 0.36.0'
 
 group :test do

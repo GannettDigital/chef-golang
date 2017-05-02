@@ -26,7 +26,6 @@ suites:
         - "github.com/Masterminds/glide"
   excludes:
     - ubuntu-14.10
-
 - name: default
   run_list:
     - recipe[golang_test::default]
@@ -34,5 +33,15 @@ suites:
   attributes:
     go:
       package_install: false
+      owner: 'vagrant'
+      group: 'vagrant'
+- name: src
+  run_list:
+    - recipe[golang_test::default]
+    - recipe[minitest-handler]
+  attributes:
+    go:
+      from_source: true
+      arch: 'amd64'
       owner: 'vagrant'
       group: 'vagrant'
